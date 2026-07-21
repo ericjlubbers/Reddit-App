@@ -35,8 +35,8 @@ that debugging is deterministic.
 ## TypeScript
 
 - `"strict": true`. No `any` without an inline `// reason: …` comment.
-- Server bundle must compile to **CommonJS** (`module: "commonjs"`, `target: "es2022"`). Devvit Web does not accept ES modules in the server bundle.
-- All imports use `.js` extensions in compiled output; in source, prefer `tsx`/`ts` paths that the build tool resolves.
+- Server bundle must compile to **CommonJS**. Devvit Web does not accept ES modules in the server bundle. Current Devvit CLI (`@devvit/web` ≥ 0.13) scaffolds TS source in ESM/bundler style (`moduleResolution: "Bundler"`, `verbatimModuleSyntax: true`, no `module` field in tsconfig) and enforces the CommonJS *output* via esbuild's `--format=cjs` flag in `package.json#scripts.build:server`. Do not hand-edit `tsconfig.json` to force `module: "commonjs"` — keep the esbuild flag instead.
+- Source target: `ES2023` (per the scaffolded `tsconfig.base.json`). All imports use `.ts`/`.js` extensions as scaffolded; let the build tool (esbuild) resolve them.
 
 ## Naming
 

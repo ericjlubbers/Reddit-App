@@ -6,7 +6,7 @@ completes or starts a phase **must** update this file.
 | Phase | Status | Verification | Notes |
 |---|---|---|---|
 | 0 — Prerequisites | � done | `./scripts/verify.sh 0` — 4 pass · 0 fail | See `phase-0.answers.md`. App name `coloradosun-bot`, prod sub r/coloradosun (~3500 members), test sub r/coloradosun_dev. One open item: n8n webhook URL not yet created (n8n Cloud hostname `coloradosun.app.n8n.cloud` is known and sufficient for Phase 2) |
-| 1 — Scaffold | ⬜ not started | `./scripts/verify.sh 1` | Unblocked — app name + test sub confirmed |
+| 1 — Scaffold | 🟩 done | `./scripts/verify.sh 1` — 7 pass · 0 fail | Scaffolded via `devvit new --template bare` (current CLI's equivalent of the doc's "Hello World" template; renamed from `@devvit/server` to `@devvit/web`). Playtest verified live on r/coloradosun_dev, v0.0.1.1. Updated `phase-1-scaffold.md`, `CONVENTIONS.md`, and `verify.sh` to match current Devvit tooling (see commit). |
 | 2 — `devvit.json` config | ⬜ not started | `./scripts/verify.sh 2` | Unblocked — RSS host `coloradosun.com` + n8n host `coloradosun.app.n8n.cloud` confirmed |
 | 3 — Server implementation | ⬜ not started | `./scripts/verify.sh 3` | 🟥 partially blocked — n8n webhook path not yet created; webhook.send can't be end-to-end tested until it exists |
 | 4 — App settings | ⬜ not started | `./scripts/verify.sh 4` | — |

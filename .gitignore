@@ -9,6 +9,7 @@ pnpm-debug.log*
 dist/
 build/
 *.tsbuildinfo
+public/*.js*
 
 # Devvit
 .devvit/

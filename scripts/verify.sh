@@ -105,10 +105,11 @@ phase_1() {
   fi
   pass "package.json exists"
 
-  if grep -q '"@devvit/server"' package.json; then
-    pass "@devvit/server is a dependency"
+  if grep -q '"@devvit/web"' package.json; then
+    pass "@devvit/web is a dependency"
   else
-    fail "@devvit/server not listed in package.json"
+    fail "@devvit/web not listed in package.json" \
+         "Current Devvit CLI (>=0.13) renamed @devvit/server to @devvit/web."
   fi
 
   if grep -E '"dev"\s*:\s*"devvit playtest r/' package.json >/dev/null; then
@@ -118,13 +119,15 @@ phase_1() {
          "Edit package.json and set: \"dev\": \"devvit playtest r/<your-test-sub>\""
   fi
 
+  if grep -E '"build:server"' package.json | grep -q -- '--format=cjs'; then
+    pass "server build script compiles to CommonJS (esbuild --format=cjs)"
+  else
+    fail "package.json#scripts.build:server does not target CommonJS" \
+         "Devvit Web requires the server bundle to be CommonJS; build:server must include esbuild's --format=cjs flag."
+  fi
+
   if [ -f tsconfig.json ]; then
-    if grep -E '"module"\s*:\s*"commonjs"' tsconfig.json >/dev/null; then
-      pass 'tsconfig.json has "module": "commonjs"'
-    else
-      fail 'tsconfig.json#module is not "commonjs"' \
-           "Devvit Web requires the server bundle to be CommonJS."
-    fi
+    pass "tsconfig.json exists"
   else
     fail "tsconfig.json not found"
   fi
@@ -135,10 +138,10 @@ phase_1() {
     local major minor
     major=${v%%.*}
     minor=$(echo "$v" | awk -F. '{print $2}')
-    if [ "$major" -gt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -ge 2 ]; }; then
-      pass "node version $v (>= 22.2.0)"
+    if [ "$major" -gt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -ge 6 ]; }; then
+      pass "node version $v (>= 22.6.0)"
     else
-      fail "node version $v is below 22.2.0" "nvm install 22 && nvm use 22"
+      fail "node version $v is below 22.6.0" "nvm install 22 && nvm use 22"
     fi
   else
     skip "node not on PATH"
