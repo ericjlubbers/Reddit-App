@@ -308,9 +308,45 @@ phase_4() {
     fail "src/server/lib/settings.ts missing"
   fi
 
-  note "Manual: change 'enabled' to false in the Developer Portal, run the menu trigger, confirm 'pipeline.run status:skip' appears in 'npx devvit logs'."
+  if [ ! -f devvit.json ]; then
+    fail "devvit.json not found (Phase 2 prerequisite)"
+  elif ! require jq; then
+    skip "jq not on PATH — install jq to enable schema-level checks" \
+         "brew install jq"
+    grep -q '"subreddit"' devvit.json && pass "settings.subreddit block present (grep)" || fail "settings.subreddit block missing (grep)"
+  else
+    local expected_fields=(rssUrl n8nWebhookUrl commentTemplate enabled)
+    local missing=0
+    for field in "${expected_fields[@]}"; do
+      if jq -e --arg f "$field" '.settings.subreddit[$f] != null' devvit.json >/dev/null 2>&1; then
+        pass "devvit.json#settings.subreddit.$field present"
+      else
+        fail "devvit.json#settings.subreddit.$field missing"
+        missing=$((missing + 1))
+      fi
+    done
+
+    local enabled_type
+    enabled_type=$(jq -r '.settings.subreddit.enabled.type // ""' devvit.json)
+    if [ "$enabled_type" = "boolean" ]; then
+      pass "settings.subreddit.enabled.type = boolean"
+    else
+      fail "settings.subreddit.enabled.type is '$enabled_type' (expected 'boolean')"
+    fi
+
+    local template_type
+    template_type=$(jq -r '.settings.subreddit.commentTemplate.type // ""' devvit.json)
+    if [ "$template_type" = "paragraph" ]; then
+      pass "settings.subreddit.commentTemplate.type = paragraph"
+    else
+      fail "settings.subreddit.commentTemplate.type is '$template_type' (expected 'paragraph')"
+    fi
+  fi
+
+  note "Manual: change 'enabled' to false via the subreddit's app-settings surface, run the menu trigger, confirm 'pipeline.run status:skip' appears in 'npx devvit logs'."
   note "Manual: change commentTemplate, run trigger, confirm new template is reflected in the next post."
 }
+
 
 phase_5() {
   printf "\n== Phase 5 — Manual trigger + observability ==\n"

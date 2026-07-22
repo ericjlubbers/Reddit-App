@@ -36,6 +36,33 @@
       }
     ]
   },
+  "settings": {
+    "subreddit": {
+      "rssUrl": {
+        "type": "string",
+        "label": "RSS feed URL",
+        "helpText": "The RSS feed to poll for new items.",
+        "defaultValue": "https://coloradosun.com/feed/?partner-feed=reddit-rss"
+      },
+      "n8nWebhookUrl": {
+        "type": "string",
+        "label": "n8n webhook URL",
+        "helpText": "Webhook endpoint each new item is forwarded to."
+      },
+      "commentTemplate": {
+        "type": "paragraph",
+        "label": "Comment template",
+        "helpText": "Placeholders: {title}, {link}, {summary}, {publishedAt}",
+        "defaultValue": "{summary}\n\n— Read more at {link}"
+      },
+      "enabled": {
+        "type": "boolean",
+        "label": "Enabled",
+        "helpText": "Kill-switch. Turn off to stop posting without a redeploy.",
+        "defaultValue": true
+      }
+    }
+  },
   "marketingAssets": {"icon": "assets/icon.png"},
   "dev": {"subreddit": "coloradosun_dev"}
 }

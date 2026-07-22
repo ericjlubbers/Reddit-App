@@ -1,9 +1,12 @@
 import {settings} from '@devvit/web/server'
 import type {AppSettings} from '../../shared/types.ts'
 
-// Defaults confirmed in phase-0.answers.md. devvit.json has no `settings`
-// schema/UI yet (Phase 4's job) — these are the values used until then, and
-// the shape here is what Phase 4 will read/override once the schema exists.
+// Defaults confirmed in phase-0.answers.md. devvit.json#settings.subreddit
+// (Phase 4) defines the schema/UI a mod sees; these are the fallback values
+// used until a mod saves their own, and for any field not yet configured on
+// a fresh install. Deliberately default-fallback rather than throw-on-missing
+// (see docs/PHASE-STATUS.md Phase 4 notes for the reasoning) — a fresh
+// install must not hard-fail before the mod has touched settings.
 const DEFAULT_RSS_URL = 'https://coloradosun.com/feed/?partner-feed=reddit-rss'
 const DEFAULT_COMMENT_TEMPLATE = '{summary}\n\n— Read more at {link}'
 const DEFAULT_ENABLED = true
