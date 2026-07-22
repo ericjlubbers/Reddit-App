@@ -1,31 +1,37 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
   "name": "coloradosun-bot",
-  "post": {
-    "entrypoints": {
-      "default": {
-        "entry": "splash.html"
-      },
-      "game": {
-        "entry": "game.html"
+  "server": { "entry": "index.js" },
+  "permissions": {
+    "redis": true,
+    "reddit": { "enable": true, "scope": "moderator" },
+    "http": {
+      "enable": true,
+      "domains": ["coloradosun.com", "coloradosun.app.n8n.cloud"]
+    },
+    "media": false,
+    "payments": false,
+    "realtime": false
+  },
+  "scheduler": {
+    "tasks": {
+      "poll-rss": {
+        "endpoint": "/internal/cron/poll-rss",
+        "cron": "*/15 * * * *"
       }
     }
   },
-  "server": {},
   "menu": {
     "items": [
       {
-        "label": "[coloradosun-bot] New Post",
-        "description": "Create a new coloradosun-bot post.",
+        "label": "Run RSS poll now",
+        "description": "Manually trigger the RSS-to-Reddit pipeline",
+        "forUserType": "moderator",
         "location": "subreddit",
-        "endpoint": "/internal/on/menu/new-post"
+        "endpoint": "/internal/menu/run-poll"
       }
     ]
   },
-  "triggers": {
-    "onAppInstall": "/internal/on/app/install"
-  },
-  "scripts": {
-    "dev": "npm run watch"
-  }
+  "marketingAssets": { "icon": "assets/icon.png" },
+  "dev": { "subreddit": "coloradosun_dev" }
 }

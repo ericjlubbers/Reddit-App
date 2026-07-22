@@ -250,15 +250,7 @@ phase_2() {
     fail "assets/icon.png missing" "Drop a 1024x1024 PNG at assets/icon.png. Placeholder is OK for dev."
   fi
 
-  if require npx; then
-    if npx --no -- devvit build >/dev/null 2>&1; then
-      pass "npx devvit build exits 0"
-    else
-      fail "npx devvit build failed" "Run it directly to see the schema errors."
-    fi
-  else
-    skip "npx not on PATH — could not run 'devvit build'"
-  fi
+  note "Current Devvit CLI (0.13.9) has no build/validate-only command — 'devvit build' does not exist. For real end-to-end confirmation, run 'npx devvit playtest <test-sub>' manually (not scripted here; it's a long-running watch process)."
 }
 
 phase_3() {

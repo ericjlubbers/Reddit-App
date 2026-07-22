@@ -10,7 +10,7 @@ hostname).
 
 1. Replace the scaffolded `devvit.json` with the configuration below (substituting your values).
 2. Drop a 1024×1024 PNG into `assets/icon.png`. A placeholder is fine for dev; replace before Phase 6 launch.
-3. Run `npx devvit build` and confirm it exits 0.
+3. Current Devvit CLI (`@devvit/cli` 0.13.9) has no `devvit build`/validate-only command (verified via `npx devvit help`; only `init, install, login, logout, logs, metrics, new, playtest, publish, uninstall, upload, version, view, whoami` exist). Schema-shape checks in `./scripts/verify.sh 2` (domains, scheduler endpoint, menu endpoint, redis, reddit scope, icon file, valid JSON) stand in for automated validation. For real end-to-end confirmation that Reddit's backend accepts the config, run `npx devvit playtest <your-test-sub>` manually and confirm it installs without a schema error, then stop it (Ctrl+C) — this is a manual step, not part of `verify.sh`, since `playtest` is a long-running watch/log-stream process.
 
 ## Target `devvit.json`
 
@@ -70,13 +70,16 @@ hostname).
 - Contains `scheduler.tasks.poll-rss` with `endpoint: "/internal/cron/poll-rss"`
 - Contains `menu.items[].endpoint: "/internal/menu/run-poll"`
 - `assets/icon.png` exists
-- `npx devvit build` exits 0
+
+Real-world confirmation (manual, not part of `verify.sh`): `npx devvit playtest <your-test-sub>` installs the config without a schema error.
 
 ## Troubleshooting
 
 - **"domains must be exact hostnames"** → strip protocol/path; `https://example.com/feed.xml` becomes `example.com`.
 - **Schema validation errors** → run with the `$schema` line so your editor highlights problems inline.
 - **Icon error at build time** → the file must be exactly 1024×1024 and PNG.
+- **`server.entry` mismatch** → `server.entry` resolves relative to `server.dir` (default `"dist/server"`, per the config schema), not the project root. Verify against the actual `build:server` esbuild output path rather than assuming `src/server/index.js` — with the default `--outdir=dist/server` in `package.json#scripts.build:server`, the correct value is `"index.js"` (i.e. `dist/server/index.js` once resolved).
+- **`npx devvit build` errors with "is not a devvit command"** → expected on current CLI (0.13.9); there is no build/validate-only command. Use the schema-shape checks in `verify.sh` plus a manual `devvit playtest` run instead.
 
 ## Hand-off to Phase 3
 
