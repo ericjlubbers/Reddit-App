@@ -8,12 +8,17 @@ export type GetCounterRsp = {count: number}
 export type IncCounterReq = {amount: number}
 export type IncCounterRsp = {count: number}
 
+/** Result of one RSS-pipeline tick. */
+export type PollRssRsp = {ok: number; skipped: number; failed: number}
+
 export type Endpoint = (typeof Endpoint)[keyof typeof Endpoint]
 export const Endpoint = {
   GetCounter: 'api/counter',
   IncCounter: 'api/counter/inc',
   OnAppInstall: 'internal/on/app/install',
   OnMenuNewPost: 'internal/on/menu/new-post',
+  PollRss: 'internal/cron/poll-rss',
+  RunPoll: 'internal/menu/run-poll',
 } as const
 
 export const EndpointMethod = {
@@ -21,4 +26,6 @@ export const EndpointMethod = {
   [Endpoint.IncCounter]: 'POST',
   [Endpoint.OnAppInstall]: 'POST',
   [Endpoint.OnMenuNewPost]: 'POST',
+  [Endpoint.PollRss]: 'POST',
+  [Endpoint.RunPoll]: 'POST',
 } as const satisfies {[endpoint: string]: 'GET' | 'POST'}

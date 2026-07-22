@@ -183,9 +183,12 @@ app.post("/internal/menu/run-poll", async (c) => {
 
 `./scripts/verify.sh 3` passes:
 - All files listed above exist
-- `npx devvit build` exits 0
 - No `console.log` outside `lib/log.ts`
 - `runRssPipeline` is the only public export of `pipeline/rss.ts`
+
+Current Devvit CLI (0.13.9) has no `devvit build`/validate-only command (same
+drift already noted in `phase-2-config.md`); `verify.sh` does not run it. For
+real end-to-end confirmation, run `npx devvit playtest <test-sub>` manually.
 
 ## Verification (manual)
 

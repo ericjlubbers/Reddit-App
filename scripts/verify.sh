@@ -291,15 +291,7 @@ phase_3() {
     fi
   fi
 
-  if require npx; then
-    if npx --no -- devvit build >/dev/null 2>&1; then
-      pass "npx devvit build exits 0"
-    else
-      fail "npx devvit build failed"
-    fi
-  else
-    skip "npx not on PATH"
-  fi
+  note "Current Devvit CLI (0.13.9) has no build/validate-only command — 'devvit build' does not exist. For real end-to-end confirmation, run 'npx devvit playtest <test-sub>' manually (not scripted here; it's a long-running watch process)."
 }
 
 phase_4() {

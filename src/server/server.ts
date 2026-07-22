@@ -13,12 +13,16 @@ import {
   type GetCounterRsp,
   type IncCounterReq,
   type IncCounterRsp,
+  type PollRssRsp,
 } from '../shared/api.ts'
 import {dbGetCounter, dbIncCounter} from './db.ts'
+import {routePollRss} from './routes/cron.ts'
+import {routeRunPoll} from './routes/menu.ts'
 
 type AnyRsp =
   | GetCounterRsp
   | IncCounterRsp
+  | PollRssRsp
   | UiResponse
   | TriggerResponse
   | ErrorRsp
@@ -59,6 +63,12 @@ async function route(
         break
       case Endpoint.OnAppInstall:
         rsp = await routeAppInstall()
+        break
+      case Endpoint.PollRss:
+        rsp = await routePollRss()
+        break
+      case Endpoint.RunPoll:
+        rsp = await routeRunPoll()
         break
       default:
         endpoint satisfies never

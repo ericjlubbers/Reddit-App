@@ -1,13 +1,17 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
   "name": "coloradosun-bot",
-  "server": { "entry": "index.js" },
+  "server": {"entry": "index.js"},
   "permissions": {
     "redis": true,
-    "reddit": { "enable": true, "scope": "moderator" },
+    "reddit": {"enable": true, "scope": "moderator"},
     "http": {
       "enable": true,
-      "domains": ["coloradosun.com", "coloradosun.app.n8n.cloud"]
+      "domains": [
+        "coloradosun.com",
+        "coloradosun.app.n8n.cloud",
+        "webhook.site"
+      ]
     },
     "media": false,
     "payments": false,
@@ -32,6 +36,6 @@
       }
     ]
   },
-  "marketingAssets": { "icon": "assets/icon.png" },
-  "dev": { "subreddit": "coloradosun_dev" }
+  "marketingAssets": {"icon": "assets/icon.png"},
+  "dev": {"subreddit": "coloradosun_dev"}
 }
