@@ -9,6 +9,13 @@ Runs on Reddit's infrastructure under an app bot account. **No Reddit Data API
 approval needed** — Devvit is its own developer track and bypasses the
 Nov-2025 self-service closure of the public Data API.
 
+## Fetch Domains
+
+The following domains are requested for this app:
+
+- `coloradosun.com` - RSS feed source (`/feed/?partner-feed=reddit-rss`), polled on a schedule to source new posts.
+- `coloradosun.app.n8n.cloud` - n8n Cloud webhook endpoint notified after each successful post, so downstream workflows (logging, cross-posting, alerts, dashboards) can fan out.
+
 ## Where to look
 
 | Doc | Purpose |

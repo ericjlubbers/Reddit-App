@@ -7,11 +7,7 @@
     "reddit": {"enable": true, "scope": "moderator"},
     "http": {
       "enable": true,
-      "domains": [
-        "coloradosun.com",
-        "coloradosun.app.n8n.cloud",
-        "webhook.site"
-      ]
+      "domains": ["coloradosun.com", "coloradosun.app.n8n.cloud"]
     },
     "media": false,
     "payments": false,
