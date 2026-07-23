@@ -17,7 +17,12 @@ import {
 } from '../shared/api.ts'
 import {dbGetCounter, dbIncCounter} from './db.ts'
 import {routePollRss} from './routes/cron.ts'
-import {routeRunPoll} from './routes/menu.ts'
+import {
+  routeDumpState,
+  routeResetDedupeConfirm,
+  routeResetDedupeSubmit,
+  routeRunPoll,
+} from './routes/menu.ts'
 
 type AnyRsp =
   | GetCounterRsp
@@ -69,6 +74,15 @@ async function route(
         break
       case Endpoint.RunPoll:
         rsp = await routeRunPoll()
+        break
+      case Endpoint.DumpState:
+        rsp = await routeDumpState()
+        break
+      case Endpoint.ResetDedupe:
+        rsp = routeResetDedupeConfirm()
+        break
+      case Endpoint.ResetDedupeConfirm:
+        rsp = await routeResetDedupeSubmit()
         break
       default:
         endpoint satisfies never

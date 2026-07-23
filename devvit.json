@@ -29,8 +29,25 @@
         "forUserType": "moderator",
         "location": "subreddit",
         "endpoint": "/internal/menu/run-poll"
+      },
+      {
+        "label": "Debug: dump state",
+        "description": "Show current dedupe count and last-poll result",
+        "forUserType": "moderator",
+        "location": "subreddit",
+        "endpoint": "/internal/menu/dump-state"
+      },
+      {
+        "label": "Debug: reset dedupe state",
+        "description": "Clear rss:seen-guids so previously-posted items can be reposted",
+        "forUserType": "moderator",
+        "location": "subreddit",
+        "endpoint": "/internal/menu/reset-dedupe"
       }
     ]
+  },
+  "forms": {
+    "reset-dedupe-confirm": "/internal/form/reset-dedupe-confirm"
   },
   "settings": {
     "subreddit": {

@@ -367,14 +367,27 @@ phase_5() {
     else
       fail "menu item /internal/menu/reset-dedupe missing"
     fi
+    if jq -e '.forms | to_entries[]? | select(.value == "/internal/form/reset-dedupe-confirm")' devvit.json >/dev/null; then
+      pass "devvit.json#forms maps a form name to /internal/form/reset-dedupe-confirm"
+    else
+      fail "devvit.json#forms missing an entry mapping to /internal/form/reset-dedupe-confirm"
+    fi
   else
     grep -q '"/internal/menu/dump-state"' devvit.json && pass "dump-state endpoint string present" || fail "dump-state endpoint missing"
     grep -q '"/internal/menu/reset-dedupe"' devvit.json && pass "reset-dedupe endpoint string present" || fail "reset-dedupe endpoint missing"
+    grep -q '"/internal/form/reset-dedupe-confirm"' devvit.json && pass "reset-dedupe-confirm form endpoint string present" || fail "reset-dedupe-confirm form endpoint missing"
+  fi
+
+  if [ -f src/server/routes/menu.ts ]; then
+    if grep -q "showForm" src/server/routes/menu.ts; then
+      pass "reset-dedupe menu handler returns a showForm confirm"
+    else
+      fail "expected the reset-dedupe menu handler to return a showForm confirm before executing the reset"
+    fi
   fi
 
   if [ -f src/server/pipeline/rss.ts ]; then
-    if grep -E '"op"\s*:\s*"pipeline\.run"' src/server/pipeline/rss.ts >/dev/null \
-       || grep -E 'op\s*:\s*"pipeline\.run"' src/server/pipeline/rss.ts >/dev/null; then
+    if grep -E "op[[:space:]]*:[[:space:]]*['\"]pipeline\.run['\"]" src/server/pipeline/rss.ts >/dev/null; then
       pass "pipeline.run log line present in rss.ts"
     else
       fail "expected a pipeline.run log line at the end of runRssPipeline"

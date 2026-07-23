@@ -19,6 +19,9 @@ export const Endpoint = {
   OnMenuNewPost: 'internal/on/menu/new-post',
   PollRss: 'internal/cron/poll-rss',
   RunPoll: 'internal/menu/run-poll',
+  DumpState: 'internal/menu/dump-state',
+  ResetDedupe: 'internal/menu/reset-dedupe',
+  ResetDedupeConfirm: 'internal/form/reset-dedupe-confirm',
 } as const
 
 export const EndpointMethod = {
@@ -28,4 +31,13 @@ export const EndpointMethod = {
   [Endpoint.OnMenuNewPost]: 'POST',
   [Endpoint.PollRss]: 'POST',
   [Endpoint.RunPoll]: 'POST',
+  [Endpoint.DumpState]: 'POST',
+  [Endpoint.ResetDedupe]: 'POST',
+  [Endpoint.ResetDedupeConfirm]: 'POST',
 } as const satisfies {[endpoint: string]: 'GET' | 'POST'}
+
+/** Names of forms configured in devvit.json#forms, mapped to their submit endpoint. */
+export type FormName = (typeof FormName)[keyof typeof FormName]
+export const FormName = {
+  ResetDedupeConfirm: 'reset-dedupe-confirm',
+} as const
