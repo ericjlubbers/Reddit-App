@@ -1,8 +1,15 @@
 import {context, reddit} from '@devvit/web/server'
 import {XMLParser} from 'fast-xml-parser'
 import type {RssItem, WebhookPayload} from '../../shared/types.ts'
+import {decodeHtmlEntities} from '../lib/format.ts'
 import {log, timed} from '../lib/log.ts'
-import {isSeen, markSeen, type PollResult, recordPoll} from '../lib/redis.ts'
+import {
+  isSeen,
+  markSeen,
+  type PollResult,
+  recordFailure,
+  recordPoll,
+} from '../lib/redis.ts'
 import {getSettings} from '../lib/settings.ts'
 import {renderComment} from './templates.ts'
 
@@ -21,64 +28,70 @@ export async function runRssPipeline(): Promise<PollResult> {
     return {ok: 0, skipped: 0, failed: 0}
   }
 
-  const xml = await timed('rss.fetch', {url: settings.rssUrl}, () =>
-    fetchText(settings.rssUrl),
-  )
-  const items = await timed('rss.parse', {byteLen: xml.length}, () =>
-    Promise.resolve(parseRss(xml)),
-  )
+  try {
+    const xml = await timed('rss.fetch', {url: settings.rssUrl}, () =>
+      fetchText(settings.rssUrl),
+    )
+    const items = await timed('rss.parse', {byteLen: xml.length}, () =>
+      Promise.resolve(parseRss(xml)),
+    )
 
-  let ok = 0
-  let skipped = 0
-  let failed = 0
-  for (const item of items) {
-    try {
-      if (await isSeen(item.guid)) {
-        skipped++
-        continue
-      }
-      const post = await timed('rss.submit-post', {guid: item.guid}, () =>
-        reddit.submitPost({
-          subredditName: context.subredditName,
+    let ok = 0
+    let skipped = 0
+    let failed = 0
+    for (const item of items) {
+      try {
+        if (await isSeen(item.guid)) {
+          skipped++
+          continue
+        }
+        const post = await timed('rss.submit-post', {guid: item.guid}, () =>
+          reddit.submitPost({
+            subredditName: context.subredditName,
+            title: item.title,
+            url: item.link,
+          }),
+        )
+        await timed('rss.submit-comment', {postId: post.id}, () =>
+          reddit.submitComment({
+            id: post.id,
+            text: renderComment(item, settings.commentTemplate),
+          }),
+        )
+        await markSeen(item.guid)
+        const payload: WebhookPayload = {
+          postId: post.id,
+          permalink: `https://www.reddit.com${post.permalink}`,
           title: item.title,
-          url: item.link,
-        }),
-      )
-      await timed('rss.submit-comment', {postId: post.id}, () =>
-        reddit.submitComment({
-          id: post.id,
-          text: renderComment(item, settings.commentTemplate),
-        }),
-      )
-      await markSeen(item.guid)
-      const payload: WebhookPayload = {
-        postId: post.id,
-        permalink: `https://www.reddit.com${post.permalink}`,
-        title: item.title,
-        link: item.link,
-        publishedAt: item.publishedAt,
-        guid: item.guid,
+          link: item.link,
+          publishedAt: item.publishedAt,
+          guid: item.guid,
+        }
+        await timed('webhook.send', {postId: post.id}, () =>
+          sendWebhook(settings.n8nWebhookUrl, payload),
+        )
+        ok++
+      } catch (error) {
+        failed++
+        log({
+          level: 'error',
+          op: 'pipeline.item',
+          status: 'error',
+          context: {guid: item.guid},
+          error,
+        })
       }
-      await timed('webhook.send', {postId: post.id}, () =>
-        sendWebhook(settings.n8nWebhookUrl, payload),
-      )
-      ok++
-    } catch (error) {
-      failed++
-      log({
-        level: 'error',
-        op: 'pipeline.item',
-        status: 'error',
-        context: {guid: item.guid},
-        error,
-      })
     }
-  }
 
-  const result: PollResult = {ok, skipped, failed}
-  await recordPoll(result)
-  log({op: 'pipeline.run', status: 'ok', context: {...result}})
-  return result
+    const result: PollResult = {ok, skipped, failed}
+    await recordPoll(result)
+    log({op: 'pipeline.run', status: 'ok', context: {...result}})
+    return result
+  } catch (error) {
+    await recordFailure(error)
+    log({level: 'error', op: 'pipeline.run', status: 'error', error})
+    throw error
+  }
 }
 
 async function fetchText(url: string): Promise<string> {
@@ -111,9 +124,9 @@ function toRssItem(raw: unknown): RssItem | undefined {
     : new Date().toISOString()
   return {
     guid,
-    title: textOf(fields.title) ?? '',
+    title: decodeHtmlEntities(textOf(fields.title) ?? ''),
     link,
-    summary: textOf(fields.description) ?? '',
+    summary: decodeHtmlEntities(textOf(fields.description) ?? ''),
     publishedAt,
   }
 }

@@ -19,6 +19,7 @@ import {dbGetCounter, dbIncCounter} from './db.ts'
 import {routePollRss} from './routes/cron.ts'
 import {
   routeDumpState,
+  routeDumpStateViewClose,
   routeResetDedupeConfirm,
   routeResetDedupeSubmit,
   routeRunPoll,
@@ -83,6 +84,9 @@ async function route(
         break
       case Endpoint.ResetDedupeConfirm:
         rsp = await routeResetDedupeSubmit()
+        break
+      case Endpoint.DumpStateViewClose:
+        rsp = await routeDumpStateViewClose()
         break
       default:
         endpoint satisfies never

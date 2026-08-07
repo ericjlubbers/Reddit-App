@@ -22,6 +22,7 @@ export const Endpoint = {
   DumpState: 'internal/menu/dump-state',
   ResetDedupe: 'internal/menu/reset-dedupe',
   ResetDedupeConfirm: 'internal/form/reset-dedupe-confirm',
+  DumpStateViewClose: 'internal/form/dump-state-view-close',
 } as const
 
 export const EndpointMethod = {
@@ -34,10 +35,12 @@ export const EndpointMethod = {
   [Endpoint.DumpState]: 'POST',
   [Endpoint.ResetDedupe]: 'POST',
   [Endpoint.ResetDedupeConfirm]: 'POST',
+  [Endpoint.DumpStateViewClose]: 'POST',
 } as const satisfies {[endpoint: string]: 'GET' | 'POST'}
 
 /** Names of forms configured in devvit.json#forms, mapped to their submit endpoint. */
 export type FormName = (typeof FormName)[keyof typeof FormName]
 export const FormName = {
   ResetDedupeConfirm: 'reset-dedupe-confirm',
+  DumpStateView: 'dump-state-view',
 } as const

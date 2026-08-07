@@ -31,15 +31,15 @@
         "endpoint": "/internal/menu/run-poll"
       },
       {
-        "label": "Debug: dump state",
-        "description": "Show current dedupe count and last-poll result",
+        "label": "Check RSS bot status",
+        "description": "Show dedupe count, last poll time, and last result or error",
         "forUserType": "moderator",
         "location": "subreddit",
         "endpoint": "/internal/menu/dump-state"
       },
       {
-        "label": "Debug: reset dedupe state",
-        "description": "Clear rss:seen-guids so previously-posted items can be reposted",
+        "label": "Reset RSS bot (advanced)",
+        "description": "Clear remembered items so previously-posted items can be reposted",
         "forUserType": "moderator",
         "location": "subreddit",
         "endpoint": "/internal/menu/reset-dedupe"
@@ -47,7 +47,8 @@
     ]
   },
   "forms": {
-    "reset-dedupe-confirm": "/internal/form/reset-dedupe-confirm"
+    "reset-dedupe-confirm": "/internal/form/reset-dedupe-confirm",
+    "dump-state-view": "/internal/form/dump-state-view-close"
   },
   "settings": {
     "subreddit": {

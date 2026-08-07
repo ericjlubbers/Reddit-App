@@ -15,15 +15,15 @@
     "playtest": "devvit playtest",
     "test": "npm run test:types && npm run lint && npm run test:unit && npm run build",
     "test:types": "tsc --build",
-    "test:unit": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test src/**/*.test.ts",
+    "test:unit": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test 'src/**/*.test.ts'",
     "publish": "npm run clean && npm run build && devvit publish",
     "watch": "sh -c 'trap \"kill 0\" exit; npm run build:client -- --watch=forever& npm run build:server -- --watch=forever& wait' --"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.2",
-    "@devvit/web": "0.13.9",
+    "@devvit/web": "^0.13.10",
     "@types/node": "22.20.1",
-    "devvit": "0.13.9",
+    "devvit": "^0.13.10",
     "esbuild": "0.28.1",
     "typescript": "6.0.3"
   },

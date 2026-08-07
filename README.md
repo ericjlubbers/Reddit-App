@@ -13,8 +13,8 @@ Nov-2025 self-service closure of the public Data API.
 
 The following domains are requested for this app:
 
-- `coloradosun.com` - RSS feed source (`/feed/?partner-feed=reddit-rss`), polled on a schedule to source new posts.
-- `coloradosun.app.n8n.cloud` - n8n Cloud webhook endpoint notified after each successful post, so downstream workflows (logging, cross-posting, alerts, dashboards) can fan out.
+- `coloradosun.com` - The Colorado Sun's own domain, used to fetch its own RSS feed (`https://coloradosun.com/feed/?partner-feed=reddit-rss`). The app polls this feed on a cron schedule and posts only The Colorado Sun's own published articles to r/coloradosun. No user data or third-party content is fetched from this domain.
+- `coloradosun.app.n8n.cloud` - The Colorado Sun's own n8n Cloud automation endpoint. After each successful post, the app sends a webhook to this domain to notify internal workflows (logging, cross-posting, alerts, dashboards). This endpoint is controlled by The Colorado Sun and is not a consumer-facing or shared service.
 
 ## Where to look
 
@@ -29,7 +29,7 @@ The following domains are requested for this app:
 
 ## Quick orientation
 
-- **Stack**: Devvit Web, TypeScript, Node 22.2+, Hono server, `@devvit/server` SDK, Redis (Devvit-managed)
+- **Stack**: Devvit Web, TypeScript, Node 22.2+, raw `node:http` server, `@devvit/web/server` SDK, Redis (Devvit-managed)
 - **Identity**: App bot account (named by `devvit.json#name`)
 - **Trigger**: cron task in `devvit.json` calling `/internal/cron/poll-rss`
 - **Manual trigger**: subreddit menu item `"Run RSS poll now"`

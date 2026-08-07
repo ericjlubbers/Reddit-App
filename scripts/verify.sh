@@ -372,10 +372,16 @@ phase_5() {
     else
       fail "devvit.json#forms missing an entry mapping to /internal/form/reset-dedupe-confirm"
     fi
+    if jq -e '.forms | to_entries[]? | select(.value == "/internal/form/dump-state-view-close")' devvit.json >/dev/null; then
+      pass "devvit.json#forms maps a form name to /internal/form/dump-state-view-close"
+    else
+      fail "devvit.json#forms missing an entry mapping to /internal/form/dump-state-view-close"
+    fi
   else
     grep -q '"/internal/menu/dump-state"' devvit.json && pass "dump-state endpoint string present" || fail "dump-state endpoint missing"
     grep -q '"/internal/menu/reset-dedupe"' devvit.json && pass "reset-dedupe endpoint string present" || fail "reset-dedupe endpoint missing"
     grep -q '"/internal/form/reset-dedupe-confirm"' devvit.json && pass "reset-dedupe-confirm form endpoint string present" || fail "reset-dedupe-confirm form endpoint missing"
+    grep -q '"/internal/form/dump-state-view-close"' devvit.json && pass "dump-state-view form endpoint string present" || fail "dump-state-view form endpoint missing"
   fi
 
   if [ -f src/server/routes/menu.ts ]; then
